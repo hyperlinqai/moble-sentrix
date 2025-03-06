@@ -1,4 +1,3 @@
-
 import { mobileSentrixConfig } from './authService';
 import { toast } from 'sonner';
 
@@ -42,6 +41,10 @@ export interface Product {
   product_badges_text?: string;
   image_gallery?: string[];
   related_product?: Product[];
+  product_extra_info?: string;
+  battery_mah?: string;
+  battery_volt?: string;
+  battery_wh?: string;
 }
 
 export interface ProductListResponse {

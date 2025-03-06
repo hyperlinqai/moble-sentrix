@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -18,7 +17,11 @@ import {
   BarChart, 
   Package, 
   Info, 
-  ShoppingCart 
+  ShoppingCart, 
+  Weight, 
+  Battery, 
+  Zap, 
+  Lightbulb 
 } from 'lucide-react';
 
 const ProductDetail = () => {
@@ -255,71 +258,66 @@ const ProductDetail = () => {
                 )}
                 
                 {product.product_extra_info && (
-                  <div>
-                    <h3 className="font-medium mb-2">Additional Information</h3>
-                    <div dangerouslySetInnerHTML={{ __html: product.product_extra_info }} />
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-2">Additional Information</h3>
+                    <p className="text-muted-foreground whitespace-pre-line">
+                      {product.product_extra_info}
+                    </p>
                   </div>
                 )}
               </TabsContent>
               
               <TabsContent value="specs" className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
-                  {product.attribute_set_id && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Product Type</span>
-                      <span className="font-medium">{getProductType(product.attribute_set_id)}</span>
-                    </div>
-                  )}
-                  
-                  {product.manufacturer_text && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Manufacturer</span>
-                      <span className="font-medium">{product.manufacturer_text}</span>
-                    </div>
-                  )}
-                  
-                  {product.model_text && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Model</span>
-                      <span className="font-medium">{product.model_text}</span>
-                    </div>
-                  )}
-                  
-                  {product.color_text && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Color</span>
-                      <span className="font-medium">{product.color_text}</span>
-                    </div>
-                  )}
-                  
-                  {product.weight && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Weight</span>
-                      <span className="font-medium">{product.weight} g</span>
-                    </div>
-                  )}
-                  
-                  {/* Battery specific fields */}
-                  {product.battery_mah && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Capacity</span>
-                      <span className="font-medium">{product.battery_mah} mAh</span>
-                    </div>
-                  )}
-                  
-                  {product.battery_volt && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Voltage</span>
-                      <span className="font-medium">{product.battery_volt} V</span>
-                    </div>
-                  )}
-                  
-                  {product.battery_wh && (
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Watt Hours</span>
-                      <span className="font-medium">{product.battery_wh} Wh</span>
-                    </div>
-                  )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    {product.weight && (
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-md bg-primary/10">
+                          <Weight className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">Weight</p>
+                          <p className="text-sm text-muted-foreground">{product.weight} g</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {product.battery_mah && (
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-md bg-primary/10">
+                          <Battery className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">Battery Capacity</p>
+                          <p className="text-sm text-muted-foreground">{product.battery_mah} mAh</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {product.battery_volt && (
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-md bg-primary/10">
+                          <Zap className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">Battery Voltage</p>
+                          <p className="text-sm text-muted-foreground">{product.battery_volt} V</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {product.battery_wh && (
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-md bg-primary/10">
+                          <Lightbulb className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">Watt Hours</p>
+                          <p className="text-sm text-muted-foreground">{product.battery_wh} Wh</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </TabsContent>
               
@@ -368,6 +366,23 @@ const ProductDetail = () => {
             </div>
           </div>
         )}
+        
+        {/* Product metadata */}
+        <div className="mt-8 border-t pt-6">
+          <div className="flex flex-wrap gap-2">
+            {product.sku && (
+              <Badge variant="outline">SKU: {product.sku}</Badge>
+            )}
+            
+            {product.manufacturer_text && (
+              <Badge variant="outline">{product.manufacturer_text}</Badge>
+            )}
+            
+            {product.model_text && (
+              <Badge variant="outline">{product.model_text}</Badge>
+            )}
+          </div>
+        </div>
       </div>
     </PageLayout>
   );

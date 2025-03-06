@@ -1,8 +1,9 @@
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { fetchCategories, fetchCategoryById, Category } from '@/services/apiService';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -11,6 +12,7 @@ import { toast } from 'sonner';
 
 export const CategoryList = () => {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [categoryPath, setCategoryPath] = useState<{id: string, name: string}[]>([]);
@@ -71,6 +73,9 @@ export const CategoryList = () => {
         }
       });
       loadCategories(category.entity_id);
+    } else {
+      // Navigate to products page with this category
+      navigate(`/products?category_id=${category.entity_id}`);
     }
   };
 
@@ -91,36 +96,19 @@ export const CategoryList = () => {
   };
 
   if (!isAuthenticated) {
-    return (
-      <Card className="w-full max-w-md bg-muted/30 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>Categories</CardTitle>
-          <CardDescription>
-            Please authenticate to view categories
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
+    return null;
   }
 
   return (
-    <Card className="w-full max-w-md mt-6 bg-card/80 backdrop-blur-sm">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          Categories
-          {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-        </CardTitle>
-        <CardDescription>
-          Browse MobileSentrix product categories
-        </CardDescription>
-        
+    <Card className="bg-card/80 backdrop-blur-sm">
+      <CardContent className="p-4">
         {/* Breadcrumb navigation */}
         {categoryPath.length > 0 && (
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
             <Button 
               variant="outline" 
               size="sm"
-              className="flex items-center gap-1" 
+              className="flex items-center gap-1 h-8" 
               onClick={handleBackClick}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -145,23 +133,21 @@ export const CategoryList = () => {
             </div>
           </div>
         )}
-      </CardHeader>
-      
-      <CardContent>
+        
         {isLoading ? (
           <div className="flex justify-center py-6">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         ) : error ? (
-          <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-md">
+          <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
             {error}
           </div>
         ) : categories.length === 0 ? (
-          <div className="text-center py-6 text-muted-foreground">
+          <div className="text-center py-4 text-muted-foreground">
             No categories found
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1">
             {categories.map((category) => (
               <div key={category.entity_id} className="group">
                 <div 
@@ -170,21 +156,15 @@ export const CategoryList = () => {
                 >
                   <div className="flex flex-col">
                     <span className="font-medium">{category.name}</span>
-                    <span className="text-xs text-muted-foreground">{category.url_key}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={category.is_active ? "default" : "outline"}>
-                      {category.is_active ? "Active" : "Inactive"}
-                    </Badge>
                     {category.has_children && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        Subcategories
-                        <ChevronRight className="h-3 w-3" />
-                      </Badge>
+                      <span className="text-xs text-muted-foreground">Browse subcategories</span>
                     )}
                   </div>
+                  {category.has_children && (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                  )}
                 </div>
-                <Separator className="mt-2 last:hidden" />
+                <Separator className="mt-1 last:hidden" />
               </div>
             ))}
           </div>
