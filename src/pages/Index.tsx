@@ -6,6 +6,7 @@ import { PageLayout } from '@/components/PageLayout';
 import { AuthCard } from '@/components/AuthCard';
 import { StatusIndicator } from '@/components/StatusIndicator';
 import { Separator } from '@/components/ui/separator';
+import { CategoryList } from '@/components/CategoryList';
 
 const Index = () => {
   const { isAuthenticated, isLoading, error, login, checkAuthentication } = useAuth();
@@ -78,6 +79,8 @@ const Index = () => {
             </p>
           </div>
         </AuthCard>
+        
+        {isAuthenticated && <CategoryList />}
         
         <div className="mt-12 text-center text-sm text-muted-foreground">
           <p>
